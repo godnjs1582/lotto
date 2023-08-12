@@ -1,51 +1,42 @@
+import { LOTTO } from "./constant.js"
 import { LottoNumberValidationError } from "./enum.js"
-
-
 export const purchaseLottos = (money) =>{
     if(isNaN(money)||money<0) return 0
-    const PRICE_OF_A_LOTTO = 1000
-    return parseInt(money/PRICE_OF_A_LOTTO)
+    return parseInt(money/LOTTO.PRICE)
   }
 
 export const makeWinningNumbersOfLotto =(ArrayOfWinningNumbers)=>{
-    if(checkLottoNumbersValidation(ArrayOfWinningNumbers)){
-        return ArrayOfWinningNumbers
-    }
+    validateLottoNumbers(ArrayOfWinningNumbers)
+    return ArrayOfWinningNumbers
+    
 }
-
-
-
-export const checkLottoNumbersValidation = (ArrayOfNumbers)=>{
-    const LENGHT_OF_LOTTO_NUMBERS =7
-    const numSet = new Set();
-    if(ArrayOfNumbers.length!==LENGHT_OF_LOTTO_NUMBERS) throw LottoNumberValidationError.LACK_COUNT_OF_LOTTO_NUMBER
+export const validateLottoNumbers = (ArrayOfNumbers)=>{
+    const numSet = new Set(ArrayOfNumbers);
+    if(ArrayOfNumbers.length!==LOTTO.LENGTH) throw LottoNumberValidationError.LACK_COUNT_OF_LOTTO_NUMBER
+    if (numSet.size!==ArrayOfNumbers.length){
+        throw LottoNumberValidationError.DUPLICATION_NUMBER
+    }
     for(let num of ArrayOfNumbers){
         if(!Number.isInteger(num)){
             throw LottoNumberValidationError.NOT_INTEGER
         }else if(num<1||num>45){
             throw LottoNumberValidationError.VALIDATION
-        }else if (numSet.has(num)){
-            throw LottoNumberValidationError.DUPLICATION_NUMBER
         }
-        numSet.add(num)
     }
-    return true
 }
 
   export const makeLottoNumbersArray = (numberOfLottoTicket) =>{
     let lottoTicketsArray =[]
     for(let i=0;i<numberOfLottoTicket;i++){
-      lottoTicketsArray.push(makeOneLottoNumbers())
+      lottoTicketsArray.push(makeSerailNumbersOfLotto())
     }
     return lottoTicketsArray;
   }
   
-  export const makeOneLottoNumbers =()=>{
- 
-  const LOTTO_NUMBERS_LENGTH=7
+  export const makeSerailNumbersOfLotto =()=>{
     let singleLottoNumbers =[]
-    while(singleLottoNumbers.length<LOTTO_NUMBERS_LENGTH){
-        let randomNumber=Math.floor(Math.random() * (45-1)+1);
+    while(singleLottoNumbers.length<LOTTO.LENGTH){
+        let randomNumber=Math.floor(Math.random() * (LOTTO.MAX_NUM-LOTTO.MIN_NUM)+LOTTO.MIN_NUM);
       if(!singleLottoNumbers.includes(randomNumber)){
         singleLottoNumbers.push(randomNumber)
       }
@@ -57,7 +48,6 @@ export const checkLottoNumbersValidation = (ArrayOfNumbers)=>{
   const play =(money)=>{
     const numberOfTicket =purchaseLottos(money);
     const lottoTicketsArray=makeLottoNumbersArray(numberOfTicket);
-    console.log(lottoTicketsArray)
 }
 
-play(2000)
+console.log(makeWinningNumbersOfLotto([1,2,3,4,5,6,7]))

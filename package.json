@@ -1,6 +1,5 @@
 {
-
-
+  "type":"module",
   "name": "lotto",
 
   "version": "1.0.0",
