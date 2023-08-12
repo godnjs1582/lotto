@@ -21,31 +21,8 @@ const onClickLottoPurchase = ()=>{
   purchaseLottos(inputMoney)
 }
 
-export const purchaseLottos = (money) =>{
-  if(isNaN(money)) return 0
-  const PRICE_OF_A_LOTTO = 1000
-  return parseInt(money/PRICE_OF_A_LOTTO)
-}
 
-export const makeLottoNumbersArray = (numberOfLottos) =>{
-  let lottosNumbersArray =[]
-  for(let i=0;i<numberOfLottos;i++){
-    lottosNumbersArray.push(makeOneLottoNumbers())
-  }
-  return lottosNumbersArray;
-}
 
-export const makeOneLottoNumbers =()=>{
-const randomNumber=Math.floor(Math.random() * 46);
-  let singleLottoNumbers =[]
-  const LOTTO_NUMBERS_LENGTH=7
-  while(singleLottoNumbers.length<LOTTO_NUMBERS_LENGTH){
-    if(!singleLottoNumbers.includes(randomNumber)){
-      singleLottoNumbers.push(randomNumber)
-    }
-  }
-  return singleLottoNumbers
-}
 
 export const calculateResultOfOneLotto = (numbersArray, lottoWinningNumbers)=>{
   let count = 0;
@@ -57,7 +34,7 @@ export const calculateResultOfOneLotto = (numbersArray, lottoWinningNumbers)=>{
   return count
 }
 
-e
+
 
 export const calculateRateOfReturn = (winningAmount,purchaseAmount)=>{
   if(isNaN(winningAmount)||isNaN(purchaseAmount)) return
