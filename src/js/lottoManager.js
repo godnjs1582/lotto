@@ -103,7 +103,6 @@ export const validateWinningLottoNumbers = (ArrayOfNumbers)=>{
   }
 
   const createMyLottosResultArray = (myLottosNumArray, winningNumsArray)=>{
-    console.log(winningNumsArray,"skdfml")
     let result=[]
     for(let i=0;i<myLottosNumArray.length;i++){
       result.push(calculateResultOfLotto(myLottosNumArray[i],winningNumsArray))
