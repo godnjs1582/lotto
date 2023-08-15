@@ -1,4 +1,4 @@
-import { LOTTO } from "./constant.js"
+import { LOTTO, LOTTO_RANKING_AND_PRIZE_MAP } from "./constant.js"
 import { LottoNumberValidationError } from "./enum.js"
 
 export const purchaseLottos = (money) =>{
@@ -33,9 +33,9 @@ export const validateWinningLottoNumbers = (ArrayOfNumbers)=>{
       throw LottoNumberValidationError.DUPLICATION_NUMBER
   }
   for(let num of ArrayOfNumbers){
-      if(!Number.isInteger(num)){
+      if(!Number.isInteger(+num)){
           throw LottoNumberValidationError.NOT_INTEGER
-      }else if(num<1||num>45){
+      }else if(+num<1||+num>45){
           throw LottoNumberValidationError.VALIDATION
       }
   }
@@ -63,20 +63,18 @@ export const validateWinningLottoNumbers = (ArrayOfNumbers)=>{
   }
 
   const calculateResultOfLotto=(myNumsArray, winningNumsArray)=>{
-    const myBonusNum = myNumsArray.at(-1)
-    const myWinningNum = winningNumsArray.at(-1)
-   
+    const bonusNum = winningNumsArray[winningNumsArray.length-1]
     let fitCountOfSixNumber =0;
-    for(let i=0;i<winningNumsArray.length-1;i++){
+    for(let i=0;i<myNumsArray.length;i++){
       if(winningNumsArray.includes(myNumsArray[i])){
-        fitCountOfSixNumber ++
+        fitCountOfSixNumber++
       }
     }
-    const resultOfBonusNumber = myBonusNum===myWinningNum
+    const resultOfBonusNumber=myNumsArray.includes(bonusNum)
     return {fitCountOfSixNumber,resultOfBonusNumber}
   }
 
-  const decideRankingOfLotto = (fitCountOfSixNumber,resultOfBonusNumber)=>{
+  const decideRankingOfLotto = ({fitCountOfSixNumber,resultOfBonusNumber})=>{
     let result ;
     if(fitCountOfSixNumber===6){
       result =1
@@ -94,13 +92,7 @@ export const validateWinningLottoNumbers = (ArrayOfNumbers)=>{
     return result
   }
 
-  const calculateTotalReturn =(arrayOfRanking)=>{
-    let totalReturn =0;
-    for(let i=0;i<arrayOfRanking;i++){
-      totalReturn+=LOTTO_RANKING_AND_PRIZE_MAP[arrayOfRanking[i]]
-    }
-    return totalReturn
-  }
+ 
 
   const createMyLottosResultArray = (myLottosNumArray, winningNumsArray)=>{
     let result=[]
@@ -112,32 +104,56 @@ export const validateWinningLottoNumbers = (ArrayOfNumbers)=>{
 
   const createMyLottosRankingArray =(myLottoResultArray)=>{
     let result=[]
-    for(let i=0;i<myLottoResultArray;i++){
-      result.push(decideRankingOfLotto(myLottoResultArray[j]))
+    for(let i=0;i<myLottoResultArray.length;i++){
+      result.push(decideRankingOfLotto(myLottoResultArray[i]))
     }
+    return result
   }
 
+  const calculateTotalReturn =(arrayOfRanking)=>{
+    let totalReturn =0;
+    for(let i=0;i<arrayOfRanking.length;i++){
+      totalReturn+=LOTTO_RANKING_AND_PRIZE_MAP[arrayOfRanking[i]]
+    }
+    return totalReturn
+  }
 
-const play=(money)=>{
-  const numberOfTicket = purchaseLottos(money);
-  const totalMoneyUsed = numberOfTicket*LOTTO.PRICE;
-  const myLottoNumbersArray= makeLottoTicketsArray(numberOfTicket)
-  const winningNumbers = makeWinningNumbersOfLotto([23,24,35,12,3,4,5])
+export const createLottoModalData =(myLottosRankingArray,totalRateOfReturn)=>{
+  let n5 = 0; 
+  let n4 = 0;
+  let n3 = 0;
+  let n2 = 0;
+  let n1 = 0;
+  for(let i=0;i<myLottosRankingArray.length;i++){
+    switch (myLottosRankingArray[i]) {
+      case 1:n1++
+        break;
+      case 2:n2++
+        break;
+      case 3:n3++
+        break;
+      case 4:n4++
+        break;
+      case 5:n5++
+      default:
+        break;
+    }
+  }
+  return [n5,n4,n3,n2,n1,totalRateOfReturn]
+}
+
+
+export const playLotto=(myLottoNumbersArray,winningNumbers,totalMoneyUsed)=>{
   const myLottosResultInfoArray= createMyLottosResultArray(myLottoNumbersArray,winningNumbers)
   const myLottosRankingArray = createMyLottosRankingArray(myLottosResultInfoArray)
   const totalReturnOfMyLottos = calculateTotalReturn(myLottosRankingArray) 
   const totalRateOfReturn = totalReturnOfMyLottos/totalMoneyUsed
-  console.log(numberOfTicket,"numberOfTicket")
-  console.log(totalMoneyUsed,"totalMoneyUsed")
-  console.log(myLottoNumbersArray,"myLottoNumbersArray")
-  console.log(winningNumbers,"winningNumbers")
-  console.log(myLottosResultInfoArray,"myLottosResultInfoArray")
-  console.log(myLottosRankingArray,"myLottosRankingArray")
-  console.log(totalReturnOfMyLottos,"totalReturnOfMyLottos")
-  console.log(totalRateOfReturn,"totalRateOfReturn")
+  const myLottoModalData = createLottoModalData(myLottosRankingArray,totalRateOfReturn)
+  return myLottoModalData
 }
 
-console.log(play(2400))
+
+
 
 
 
